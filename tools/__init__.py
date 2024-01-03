@@ -1,1 +1,1 @@
-from tools.utils import Decomposition
+from tools.utils import Decomposition, Normalization
