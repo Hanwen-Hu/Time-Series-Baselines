@@ -59,3 +59,13 @@ class Normalization(nn.Module):
         else:
             x = self._denormalize(x)
         return x
+
+
+def activation_func(func_name):
+    if callable(func_name):
+        return func_name()
+    elif func_name.lower() == 'relu':
+        return nn.ReLU()
+    elif func_name.lower() == 'gelu':
+        return nn.GELU()
+    raise ValueError('Activation function is not available. You can use "relu", "gelu" or a callable name.')

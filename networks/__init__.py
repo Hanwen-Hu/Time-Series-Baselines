@@ -1,1 +1,2 @@
-from networks.LTSF_Linear import Linear, DLinear, NLinear
+from networks.LTSF_Linear import DLinear, NLinear
+from networks.PatchTST import PatchTST

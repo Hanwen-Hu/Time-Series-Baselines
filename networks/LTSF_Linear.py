@@ -8,6 +8,7 @@ from tools import Decomposition
 
 # Default Hyper Parameters
 settings = {
+    'decomposition': True,  # DLinear是否要进行时间序列分解
     'individual': True, # True表示多元预测时每个维度用各自不同的参数，False表示共用参数
     'kernel_len': 25  # 成分分解时滤波窗口的长度
 }
@@ -37,14 +38,21 @@ class Linear(nn.Module):
 class DLinear(nn.Module):
     def __init__(self, args):
         super().__init__()
-        self.decomposition = Decomposition(settings['kernel_len'])
-        self.season_model = Linear(args).to(args.device)
-        self.trend_model = Linear(args).to(args.device)
+        if settings['decomposition']:
+            self.decomposition = Decomposition(settings['kernel_len'])
+            self.season_model = Linear(args).to(args.device)
+            self.trend_model = Linear(args).to(args.device)
+        else:
+            self.model = Linear(args).to(args.device)
 
     def forward(self, x):
-        season_x, trend_x = self.decomposition(x)
-        season_y, trend_y = self.season_model(season_x), self.trend_model(trend_x)
-        return season_y + trend_y
+        if settings['decomposition']:
+            season_x, trend_x = self.decomposition(x)  # batch * len * dim
+            season_y, trend_y = self.season_model(season_x), self.trend_model(trend_x)
+            x = season_y + trend_y
+        else:
+            x = self.model(x)
+        return x
 
 class NLinear(nn.Module):
     def __init__(self, args):
