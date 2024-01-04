@@ -14,6 +14,7 @@ parser.add_argument('--channel_dim', type=int, default=7, help='channel dimensio
 parser.add_argument('--batch_size', type=int, default=64, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.0001, help='learning rate')
 parser.add_argument('--epochs', type=int, default=30)
+parser.add_argument('--patience', type=int, default=3, help='patience')
 
 args = parser.parse_args()
 if torch.cuda.is_available():
