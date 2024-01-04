@@ -53,11 +53,13 @@ class Normalization(nn.Module):
             x = (x - self.bias) / (self.weight + 1e-5)
         return x * self.std + self.avg
 
-    def forward(self, x, norm:bool):
-        if norm:
+    def forward(self, x, mode):
+        if mode == 'norm':
             x = self._normalize(x)
-        else:
+        elif mode == 'denorm':
             x = self._denormalize(x)
+        else:
+            print('Error Normalization Mode')
         return x
 
 

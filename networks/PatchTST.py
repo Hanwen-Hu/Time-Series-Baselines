@@ -115,7 +115,7 @@ class Backbone(nn.Module):
 
     def forward(self, x):
         if settings['normalization']:
-            x = self.norm_layer(x, norm=True)
+            x = self.norm_layer(x, 'norm')
         x = x.transpose(1, 2)  # batch * dim * length
         if settings['end_padding']:
             x = self.padding_layer(x)
@@ -123,7 +123,7 @@ class Backbone(nn.Module):
         x = self.encoder(x)
         x = self.out_layer(x).transpose(1, 2)
         if settings['normalization']:
-            x = self.norm_layer(x, norm=False)
+            x = self.norm_layer(x, 'denorm')
         return x
 
 
@@ -137,7 +137,7 @@ class PatchTST(nn.Module):
         else:
             self.model = Backbone(args)
 
-    def forward(self, x):
+    def forward(self, x, t):
         if settings['decomposition']:
             season_x, trend_x = self.decomposition(x)
             season_x, trend_x = self.season_model(season_x), self.trend_model(trend_x)

@@ -1,3 +1,4 @@
+import math
 import numpy as np
 import torch
 import torch.nn as nn
@@ -14,7 +15,7 @@ class MultiHeadAttention(nn.Module):
 
     def _scaled_dot_product_attention(self, q, k, v, mask=None):
         # batch * head * patch_num * dim
-        attn = torch.matmul(q, k.transpose(-1, -2)) / torch.sqrt(q.shape[-1])
+        attn = torch.matmul(q, k.transpose(-1, -2)) / torch.sqrt(torch.tensor(q.shape[-1]))
         if mask is not None:
             if mask.dtype == torch.bool:
                 attn.masked_fill_(mask, -np.inf)
