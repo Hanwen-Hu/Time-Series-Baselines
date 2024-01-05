@@ -19,6 +19,7 @@ class Evaluation:
         train_loader = DataLoader(train_set, batch_size=self.args.batch_size, shuffle=True)
         valid_loader = DataLoader(valid_set, batch_size=self.args.batch_size, shuffle=True)
         optimizer = torch.optim.Adam(self.model.parameters(), lr=self.args.learning_rate)
+        best_valid, patience = float('Inf'), 0
         for epoch in range(self.args.epochs):
             train_loss, batch_num = 0, 0
             self.model.train()
@@ -41,14 +42,24 @@ class Evaluation:
             valid_loss /= batch_num
 
             print('Epoch:', epoch, '\tTrain Loss:', round(train_loss, 4), '\tValid Loss:', round(valid_loss, 4))
+            if valid_loss <= best_valid:
+                best_valid = valid_loss
+                patience = 0
+            else:
+                patience += 1
+            if patience >= self.args.patience:
+                break
+
 
     def test(self):
         test_set = datasets[self.args.dataset](self.args.device, self.args.pred_len, self.args.seq_len, self.args.channel_dim, 'test')
         test_loader = DataLoader(test_set, batch_size=self.args.batch_size, shuffle=False)
-        test_loss, batch_num = 0, 0
+        mae_func = lambda x, y: torch.mean((torch.abs(x-y)))
+        mse_loss, mae_loss, batch_num = 0, 0, 0
         self.model.eval()
         for _, (x, t, y) in enumerate(test_loader):
             y_bar = self.model(x, t)
-            test_loss += self.criterion(y_bar, y).item()
+            mse_loss += self.criterion(y_bar, y).item()
+            mae_loss += mae_func(y_bar, y)
             batch_num += 1
-        print('Test Loss:', round(test_loss / batch_num, 4))
+        print('Test Loss:', round(mse_loss / batch_num, 4), round(mae_loss / batch_num, 4))

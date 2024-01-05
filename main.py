@@ -5,16 +5,16 @@ from networks import Evaluation
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--dataset', type=str, default='ETTm', help='ETTm, ETTh')
-parser.add_argument('--model', type=str, default='PatchTST', help='DLinear, NLinear, PatchTST')
+parser.add_argument('--model', type=str, default='DLinear', help='DLinear, NLinear, PatchTST')
 
-parser.add_argument('--seq_len', type=int, default=512, help='length of input sequence')
+parser.add_argument('--seq_len', type=int, default=96*4, help='length of input sequence')
 parser.add_argument('--pred_len', type=int, default=96, help='length of output sequence')
 parser.add_argument('--channel_dim', type=int, default=7, help='channel dimension')
 
 parser.add_argument('--batch_size', type=int, default=64, help='batch size')
 parser.add_argument('--learning_rate', type=float, default=0.0001, help='learning rate')
 parser.add_argument('--epochs', type=int, default=30)
-parser.add_argument('--patience', type=int, default=3, help='patience')
+parser.add_argument('--patience', type=int, default=5, help='patience')
 
 args = parser.parse_args()
 if torch.cuda.is_available():
