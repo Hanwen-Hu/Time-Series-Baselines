@@ -16,8 +16,8 @@ settings = {
     'subtract_last': False,  # 是否用输入序列的最后一个值替代均值来归一化
     'patch_len': 16,  # 每个时间片段的长度
     'stride_len': 8,  # 每两个时间片段之间的步长
-    'end_padding': True, # 是否在尾部填充，若否则不填充
-    'embed_dim':128,  # 将每个序列片段映射成的向量的长度
+    'end_padding': True,  # 是否在尾部填充，若否则不填充
+    'embed_dim': 128,  # 将每个序列片段映射成的向量的长度
     'layer_num': 2,  # 编码器中attention的层数
     'pos_embed_mode': 'zeros',  # Transformer中位置编码选择的方式
     'head_num': 8,  # 多头注意力机制头的数目
@@ -25,6 +25,7 @@ settings = {
     'activation_func': 'relu',  # 前向传播的激活函数
     'norm_mode': 'batch',  # attention层之间的归一化方式，默认为batch，否则为layer
 }
+
 
 # 编码器中的每一层
 class Layer(nn.Module):
@@ -47,11 +48,13 @@ class Layer(nn.Module):
             return self.norm_layer(x.transpose(1, 2)).transpose(1, 2)
         else:
             return self.norm_layer(x)
+
     def forward(self, x):
         x = self.dropout(self.attn(x, x, x)) + x
         x = self.normalize(x)
         x = self.dropout(self.ff_layers(x)) + x
         return self.normalize(x)
+
 
 # 中间的编码器，包含Attention层
 class Encoder(nn.Module):
@@ -70,6 +73,7 @@ class Encoder(nn.Module):
         for layer in self.encoder_layers:
             x = layer(x)
         return x.reshape(-1, channel_dim, x.shape[-2], x.shape[-1])  # batch * channel * patch_num * embed_dim
+
 
 # 最终输出层
 class FlattenHead(nn.Module):

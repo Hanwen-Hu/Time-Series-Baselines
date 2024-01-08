@@ -14,6 +14,7 @@ class MovingAverage(nn.Module):
         x = self.window(torch.cat([left, x, right], dim=1).transpose(1, 2))
         return x.transpose(1, 2)
 
+
 class Decomposition(nn.Module):
     def __init__(self, kernel_len):
         super().__init__()

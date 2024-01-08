@@ -3,6 +3,7 @@ import math
 import torch
 import torch.nn as nn
 
+
 def line_1d_pos_embed(pos_num, exp=False, norm=True):
     pos = 2 * (torch.linspace(0, 1, pos_num).reshape(-1, 1) ** (0.5 if exp else 1)) - 1
     if norm:
@@ -10,9 +11,11 @@ def line_1d_pos_embed(pos_num, exp=False, norm=True):
         pos = pos / (torch.std(pos) * 10)
     return pos
 
+
 def line_2d_pos_embed(pos_num, embed_dim, exp=False, norm=True, eps=1e-3):
     x = 0.5 if exp else 1
-    pos = 2 * (torch.linspace(0, 1, pos_num).reshape(-1, 1) ** x) * (torch.linspace(0, 1, embed_dim).reshape(1, -1) ** x) - 1
+    pos = 2 * (torch.linspace(0, 1, pos_num).reshape(-1, 1) ** x) * (
+                torch.linspace(0, 1, embed_dim).reshape(1, -1) ** x) - 1
     for _ in range(100):
         if abs(torch.mean(pos)) <= eps:
             break
@@ -20,11 +23,13 @@ def line_2d_pos_embed(pos_num, embed_dim, exp=False, norm=True, eps=1e-3):
             x += 0.001
         else:
             x -= 0.001
-        pos = 2 * (torch.linspace(0, 1, pos_num).reshape(-1, 1) ** x) * (torch.linspace(0, 1, embed_dim).reshape(1, -1) ** x) - 1
+        pos = 2 * (torch.linspace(0, 1, pos_num).reshape(-1, 1) ** x) * (
+                    torch.linspace(0, 1, embed_dim).reshape(1, -1) ** x) - 1
     if norm:
         pos = pos - torch.mean(pos)
         pos = pos / (torch.std(pos) * 10)
     return pos
+
 
 def sin_cos_pos_embed(pos_num, embed_dim, norm=True):
     pos = torch.zeros(pos_num, embed_dim)
@@ -36,6 +41,7 @@ def sin_cos_pos_embed(pos_num, embed_dim, norm=True):
         pos = pos - torch.mean(pos)
         pos = pos / (torch.std(pos) * 10)
     return pos
+
 
 def positional_embedding(pos_num, embed_dim, mode=None, learnable=False):
     if mode == 'zero':
