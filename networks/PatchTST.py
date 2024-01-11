@@ -9,7 +9,7 @@ from units import positional_embedding, MultiHeadAttention
 
 settings = {
     'decomposition': True,  # 是否需要成分分解
-    'individual': True,  # 是否各个维度独立
+    'individual': False,  # 是否各个维度独立
     'kernel_len': 25,  # 成分分解时滤波窗口的长度
     'normalization': True,  # 是否需要归一化
     'affine': True,  # 是否需要可学习的归一化参数
@@ -67,23 +67,23 @@ class Encoder(nn.Module):
 
     def forward(self, x):
         # batch * dim * patch_num * patch_len
-        channel_dim = x.shape[1]
-        x = self.input_layer(x)  # batch * channel * patch_num * embed_dim
+        dim = x.shape[1]
+        x = self.input_layer(x)  # batch * dim * patch_num * embed_dim
         x = self.dropout(x.reshape(-1, x.shape[2], x.shape[3]) + self.pos)
         for layer in self.encoder_layers:
             x = layer(x)
-        return x.reshape(-1, channel_dim, x.shape[-2], x.shape[-1])  # batch * channel * patch_num * embed_dim
+        return x.reshape(-1, dim, x.shape[-2], x.shape[-1])  # batch * dim * patch_num * embed_dim
 
 
 # 最终输出层
 class FlattenHead(nn.Module):
-    def __init__(self, channel_dim, input_len, pred_len):
+    def __init__(self, dim, input_len, pred_len):
         super().__init__()
-        self.channel_dim = channel_dim
+        self.dim = dim
         if settings['individual']:
-            self.flattens = nn.ModuleList([nn.Flatten(start_dim=-2) for _ in range(channel_dim)])
-            self.layers = nn.ModuleList([nn.Linear(input_len, pred_len) for _ in range(channel_dim)])
-            self.dropouts = nn.ModuleList([nn.Dropout(settings['dropout']) for _ in range(channel_dim)])
+            self.flattens = nn.ModuleList([nn.Flatten(start_dim=-2) for _ in range(dim)])
+            self.layers = nn.ModuleList([nn.Linear(input_len, pred_len) for _ in range(dim)])
+            self.dropouts = nn.ModuleList([nn.Dropout(settings['dropout']) for _ in range(dim)])
         else:
             self.flattens = nn.Flatten(start_dim=-2)
             self.layers = nn.Linear(input_len, pred_len)
@@ -92,7 +92,7 @@ class FlattenHead(nn.Module):
     def forward(self, x):
         if settings['individual']:
             y = []
-            for i in range(self.channel_dim):
+            for i in range(self.dim):
                 tmp = self.flattens[i](x[:, i])
                 tmp = self.layers[i](tmp)
                 tmp = self.dropouts[i](tmp)
@@ -109,13 +109,13 @@ class Backbone(nn.Module):
     def __init__(self, args):
         super().__init__()
         if settings['normalization']:
-            self.norm_layer = Normalization(args.channel_dim, settings['affine'], settings['subtract_last'])
+            self.norm_layer = Normalization(args.dim, settings['affine'], settings['subtract_last'])
         patch_num = int((args.seq_len - settings['patch_len']) / settings['stride_len']) + 1
         if settings['end_padding']:
             self.padding_layer = nn.ReflectionPad1d((0, settings['stride_len']))
             patch_num += 1
         self.encoder = Encoder(patch_num)
-        self.out_layer = FlattenHead(args.channel_dim, settings['embed_dim'] * patch_num, args.pred_len)
+        self.out_layer = FlattenHead(args.dim, settings['embed_dim'] * patch_num, args.pred_len)
 
     def forward(self, x):
         if settings['normalization']:

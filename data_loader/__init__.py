@@ -1,1 +1,1 @@
-from data_loader.loader import ETTh, ETTm, ECL, Exchange, Weather, QPS, Solar, Traffic
+from data_loader.data_loader import data_dict
