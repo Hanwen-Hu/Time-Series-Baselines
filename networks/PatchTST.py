@@ -141,7 +141,7 @@ class PatchTST(nn.Module):
         else:
             self.model = Backbone(args)
 
-    def forward(self, x, t):
+    def forward(self, x):
         if settings['decomposition']:
             season_x, trend_x = self.decomposition(x)
             season_x, trend_x = self.season_model(season_x), self.trend_model(trend_x)

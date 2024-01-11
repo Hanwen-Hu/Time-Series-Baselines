@@ -48,7 +48,7 @@ class ECL(TimeSeries):
 class ETTh(TimeSeries):
     def __init__(self, device, pred_len, seq_len, channel_dim, mode='train', idx=1):
         super().__init__(pred_len, seq_len)
-        dataset = pd.read_csv('dataset/ETT/ETTh' + str(idx) + '.csv')
+        dataset = pd.read_csv('dataset/ETTh.csv')
         assert channel_dim < dataset.shape[1]
         self.data = torch.tensor(dataset.iloc[:, -channel_dim:].values, device=device, dtype=torch.float32)
         self._normalize()

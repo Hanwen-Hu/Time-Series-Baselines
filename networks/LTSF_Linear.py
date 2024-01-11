@@ -45,7 +45,7 @@ class DLinear(nn.Module):
         else:
             self.model = Linear(args).to(args.device)
 
-    def forward(self, x, t):
+    def forward(self, x):
         if settings['decomposition']:
             season_x, trend_x = self.decomposition(x)  # batch * len * dim
             season_y, trend_y = self.season_model(season_x), self.trend_model(trend_x)
@@ -59,7 +59,7 @@ class NLinear(nn.Module):
         super().__init__()
         self.model = Linear(args).to(args.device)
 
-    def forward(self, x, t):
+    def forward(self, x):
         last_x = x[:, -1:].detach()
         x = x - last_x
         x = self.model(x)
