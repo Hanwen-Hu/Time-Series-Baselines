@@ -35,81 +35,81 @@ class TimeSeries(Dataset):
 
 
 class Electricity(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/LD2011_2014.txt', delimiter=';')
         assert dim < dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 
 
 class ETTh(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/ETTh.csv')
         assert dim < dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 
 
 class ETTm(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/ETTm.csv')
         assert dim < dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 
 
 class Exchange(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/exchange_rate.csv', delimiter=',', header=None)
         assert dim <= dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 
 
 class QPS(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/QPS.csv')
         assert dim < dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 
 
 class Solar(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/solar_alabama.csv', delimiter=',')
         assert dim < dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 
 
 class Traffic(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/PeMS.csv', delimiter=',')
         assert dim < dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 
 
 class Weather(TimeSeries):
-    def __init__(self, device, pred_len, seq_len, dim, mode):
+    def __init__(self, pred_len, seq_len, dim, mode):
         super().__init__(pred_len, seq_len)
         dataset = pd.read_csv('dataset/mpi_roof.csv')
         assert dim < dataset.shape[1]
-        self.data = torch.tensor(dataset.iloc[:, -dim:].values, device=device, dtype=torch.float32)
+        self.data = torch.tensor(dataset.iloc[:, -dim:].values, dtype=torch.float32)
         self._normalize()
         self._split(mode)
 

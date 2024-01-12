@@ -1,8 +1,8 @@
 import torch
 from torch.utils.data import DataLoader
 
-from networks.LTSF_Linear import DLinear, NLinear
-from networks.PatchTST import PatchTST
+from models.LTSF_Linear import DLinear, NLinear
+from models.PatchTST import PatchTST
 from data_loader import data_dict
 
 
@@ -16,7 +16,7 @@ class Evaluation:
         self.mae_func = lambda x, y: torch.mean((torch.abs(x - y)))
 
     def _get_data(self, mode):
-        dataset = data_dict[self.args.dataset](self.args.device, self.args.pred_len, self.args.seq_len, self.args.dim, mode)
+        dataset = data_dict[self.args.dataset](self.args.pred_len, self.args.seq_len, self.args.dim, mode)
         return DataLoader(dataset, batch_size=self.args.batch_size, shuffle=True)
 
     def _train_model(self, loader, optimizer):
@@ -24,6 +24,7 @@ class Evaluation:
         train_loss = 0
         for _, (x, y) in enumerate(loader):
             optimizer.zero_grad()
+            x, y = x.to(self.args.device), y.to(self.args.device)
             y_bar = self.model(x)
             loss = self.mse_func(y_bar, y)
             train_loss += loss.item()
@@ -35,6 +36,7 @@ class Evaluation:
         self.model.eval()
         mse_loss, mae_loss = 0, 0
         for _, (x, y) in enumerate(loader):
+            x, y = x.to(self.args.device), y.to(self.args.device)
             y_bar = self.model(x)
             mse_loss += self.mse_func(y_bar, y).item()
             mae_loss += self.mae_func(y_bar, y).item()
