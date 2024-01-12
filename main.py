@@ -1,7 +1,7 @@
 import argparse
 import torch
 
-from networks import Evaluation
+from models import Evaluation
 
 
 dims = {'Electricity': 370, 'ETTh': 14, 'ETTm': 14, 'Exchange': 8, 'QPS': 10, 'Solar': 137, 'Traffic': 862, 'Weather': 20}
